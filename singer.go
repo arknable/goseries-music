@@ -1,11 +1,9 @@
 package music
 
-import "time"
-
-type Album struct {
-	Name        string
-	ReleaseDate time.Time
-}
+import (
+	"fmt"
+	"time"
+)
 
 type Singer struct {
 	Person
@@ -24,6 +22,22 @@ func (s *Singer) CreateAlbum(name string) *Album {
 
 func (s *Singer) Available() bool {
 	return s.IsAvailable
+}
+
+func (s *Singer) Sing(song Song) error {
+	for _, v := range song.Lyrics {
+		fmt.Printf("[%s] %s\n", s.Name, v)
+	}
+	return nil
+}
+
+func (s *Singer) SingPart(song Song, start, end int, ch chan string) {
+	for _, v := range song.Lyrics[start:end] {
+		fmt.Printf("[%s] %s\n", s.Name, v)
+		time.Sleep(10 * time.Millisecond)
+		ch <- v
+	}
+	close(ch)
 }
 
 func NewSinger(name string) *Singer {
